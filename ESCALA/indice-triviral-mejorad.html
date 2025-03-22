@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Índice Triviral v3.0</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #3498db;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 5px;
+    }
+    .version-info {
+      font-size: 0.8em;
+      color: #7f8c8d;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #3498db;
+      margin-top: 20px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #eee;
+    }
+    .pre-screening {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #e8f7f3;
+      border-left: 5px solid #1abc9c;
+    }
+    .domain {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    .domain-epidemiologic { border-left: 5px solid #3498db; }
+    .domain-behavioral { border-left: 5px solid #e74c3c; }
+    .domain-clinical { border-left: 5px solid #2ecc71; }
+    .domain-laboratory { border-left: 5px solid #f39c12; }
+    
+    .risk-factor {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .risk-factor label {
+      flex: 1;
+      margin-left: 10px;
+    }
+    .points {
+      display: flex;
+      align-items: center;
+      min-width: 180px;
+      text-align: right;
+    }
+    .points-category {
+      display: inline-block;
+      margin-left: 4px;
+      width: 45px;
+      text-align: center;
+      font-weight: bold;
+      padding: 2px 0;
+      border-radius: 3px;
+      font-size: 0.85em;
+    }
+    .points-hiv {
+      color: #e74c3c;
+      background-color: rgba(231, 76, 60, 0.1);
+      border: 1px solid rgba(231, 76, 60, 0.2);
+    }
+    .points-hbv {
+      color: #3498db;
+      background-color: rgba(52, 152, 219, 0.1);
+      border: 1px solid rgba(52, 152, 219, 0.2);
+    }
+    .points-hcv {
+      color: #2ecc71;
+      background-color: rgba(46, 204, 113, 0.1);
+      border: 1px solid rgba(46, 204, 113, 0.2);
+    }
+    .age-warning {
+      background-color: #fcf8e3;
+      border-left: 5px solid #f1c40f;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 0.9em;
+    }
+    .results {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #e8f4fd;
+      border-radius: 8px;
+      border-left: 5px solid #3498db;
+    }
+    .virus-results {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .virus-result {
+      flex-basis: 31%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .result-hiv {
+      background-color: rgba(231, 76, 60, 0.1);
+      border-left: 5px solid #e74c3c;
+    }
+    .result-hbv {
+      background-color: rgba(52, 152, 219, 0.1);
+      border-left: 5px solid #3498db;
+    }
+    .result-hcv {
+      background-color: rgba(46, 204, 113, 0.1);
+      border-left: 5px solid #2ecc71;
+    }
+    .risk-level {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .risk-low { color: #27ae60; }
+    .risk-moderate { color: #f39c12; }
+    .risk-high { color: #c0392b; }
+    .risk-excluded { color: #7f8c8d; font-style: italic; }
+    
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 15px;
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 20px auto;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 0.8em;
+      text-align: center;
+      color: #7f8c8d;
+    }
+    #detailedResults {
+      margin-top: 15px;
+    }
+    .referral-section {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e8f4fd;
+      border-radius: 8px;
+      border-left: 5px solid #9b59b6;
+      display: none;
+    }
+    .referral-item {
+      margin-bottom: 10px;
+    }
+    .question-guide {
+      padding: 12px;
+      margin: 15px 0;
+      background-color: #f6f6f6;
+      border-radius: 5px;
+      font-style: italic;
+      color: #555;
+      border-left: 3px solid #ddd;
+    }
+    .context-specific {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      border-left: 5px solid #7f8c8d;
+    }
+    .recommendations {
+      margin-top: 25px;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+    }
+    .recommendation-item {
+      background-color: #f8f9fa;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border-left: 3px solid #3498db;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      margin: 0 10px;
+      display: flex;
+      align-items: center;
+      font-size: 0.85em;
+    }
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+      border-radius: 3px;
+    }
+    .legend-hiv { background-color: rgba(231, 76, 60, 0.2); }
+    .legend-hbv { background-color: rgba(52, 152, 219, 0.2); }
+    .legend-hcv { background-color: rgba(46, 204, 113, 0.2); }
+    
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted #666;
+      cursor: help;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 280px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -140px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.9em;
+      line-height: 1.4;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    @media (max-width: 768px) {
+      .points {
+        min-width: auto;
+      }
+      .virus-result {
+        flex-basis: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Índice Triviral</h1>
+      <p>Escala de Cribado para VIH, VHB y VHC en Urgencias</p>
+      <div class="version-info">
+        Versión 3.0 (Actualización: Marzo 2025) | Próxima revisión: Marzo 2026
+      </div>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color legend-hiv"></div>
+          <span>VIH</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color legend-hbv"></div>
+          <span>VHB</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color legend-hcv"></div>
+          <span>VHC</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="age-warning">
+      <strong>Nota:</strong> Esta escala se aplica principalmente a pacientes entre 18 y 65 años. Para pacientes de 66-80 años, aplicar solo si presenta ≥2 factores de riesgo o cualquier factor conductual.
+    </div>
+    
+    <div class="question-guide">
+      <strong>Sugerencia para el profesional:</strong> "Como parte de su evaluación médica, necesito hacerle algunas preguntas sobre salud sexual y otros temas para ofrecerle la mejor atención. Esta información es confidencial y nos ayuda a determinar qué pruebas podrían ser recomendables en su caso."
+    </div>
+    
+    <form id="screeningForm">
+      <!-- Filtrado previo -->
+      <div class="pre-screening">
+        <h2>Filtrado Previo</h2>
+        <p>Completar antes de aplicar la escala completa</p>
+        <div class="risk-factor">
+          <input type="checkbox" id="prevHIV" name="prevHIV">
+          <label for="prevHIV">Prueba VIH negativa documentada en últimos 6 meses sin nuevos riesgos</label>
+          <div class="points">
+            <span class="points-category points-hiv">-4</span>
+            <span class="points-category points-hbv">0</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="hbvVaccine" name="hbvVaccine">
+          <label for="hbvVaccine">Vacunación VHB completa con anticuerpos confirmados</label>
+          <div class="points">
+            <span class="points-category points-hiv">0</span>
+            <span class="points-category points-hbv">Exc</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="resolvedHCV" name="resolvedHCV">
+          <label for="resolvedHCV">Infección VHC resuelta documentada sin nuevos riesgos</label>
+          <div class="points">
+            <span class="points-category points-hiv">0</span>
+            <span class="points-category points-hbv">0</span>
+            <span class="points-category points-hcv">Exc</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="knownHIV" name="knownHIV">
+          <label for="knownHIV">Infección VIH conocida y en seguimiento</label>
+          <div class="points">
+            <span class="points-category points-hiv">Exc</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">+1</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dominio Epidemiológico -->
+      <div class="domain domain-epidemiologic">
+        <h2>1. Dominio Epidemiológico</h2>
+        <div class="risk-factor">
+          <input type="checkbox" id="highPrevalenceHIV" name="highPrevalenceHIV">
+          <label for="highPrevalenceHIV">Origen o residencia en país de alta prevalencia VIH (África subsahariana)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+2</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="highPrevalenceHBV" name="highPrevalenceHBV">
+          <label for="highPrevalenceHBV">Origen en área endémica de VHB (Asia Oriental, África subsahariana, Amazonía)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+1</span>
+            <span class="points-category points-hbv">+3</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="socioeconomicRisk" name="socioeconomicRisk">
+          <label for="socioeconomicRisk">Situación socioeconómica de riesgo (sin hogar, vulnerabilidad, institucionalización)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+1</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">+1</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="birthCohort" name="birthCohort">
+          <label for="birthCohort" class="tooltip">Pertenencia a cohorte de nacimiento de mayor prevalencia VHC (nacidos entre 1945-1975)
+            <span class="tooltiptext">Mayor riesgo por exposición a transfusiones o procedimientos médicos antes de los controles actuales</span>
+          </label>
+          <div class="points">
+            <span class="points-category points-hiv">0</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">+3</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="prison" name="prison">
+          <label for="prison">Antecedente de estancia en prisión</label>
+          <div class="points">
+            <span class="points-category points-hiv">+1</span>
+            <span class="points-category points-hbv">+2</span>
+            <span class="points-category points-hcv">+2</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dominio Conductual -->
+      <div class="domain domain-behavioral">
+        <h2>2. Dominio Conductual</h2>
+        <div class="risk-factor">
+          <input type="checkbox" id="injectionDrugs" name="injectionDrugs">
+          <label for="injectionDrugs">Uso de drogas inyectadas o prácticas parenterales de riesgo (actual o pasado)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+3</span>
+            <span class="points-category points-hbv">+2</span>
+            <span class="points-category points-hcv">+5</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="msmMultiple" name="msmMultiple">
+          <label for="msmMultiple">Hombre que tiene sexo con hombres (HSH) con múltiples parejas</label>
+          <div class="points">
+            <span class="points-category points-hiv">+4</span>
+            <span class="points-category points-hbv">+3</span>
+            <span class="points-category points-hcv">+1</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="highRiskSex" name="highRiskSex">
+          <label for="highRiskSex">Otras prácticas sexuales de alto riesgo (múltiples parejas, sexo sin protección, prostitución)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+2</span>
+            <span class="points-category points-hbv">+2</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="contactHBV" name="contactHBV">
+          <label for="contactHBV">Contacto sexual o doméstico con persona con hepatitis B</label>
+          <div class="points">
+            <span class="points-category points-hiv">0</span>
+            <span class="points-category points-hbv">+4</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="previousSTI" name="previousSTI">
+          <label for="previousSTI">Historia de infecciones de transmisión sexual (ITS) previas recientes</label>
+          <div class="points">
+            <span class="points-category points-hiv">+2</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="chemsex" name="chemsex">
+          <label for="chemsex">Práctica de chemsex (uso de drogas en contexto sexual)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+3</span>
+            <span class="points-category points-hbv">+2</span>
+            <span class="points-category points-hcv">+2</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="tattoosPiercings" name="tattoosPiercings">
+          <label for="tattoosPiercings">Tatuajes o piercings realizados en condiciones no controladas</label>
+          <div class="points">
+            <span class="points-category points-hiv">+1</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">+3</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="transfusions" name="transfusions">
+          <label for="transfusions">Transfusiones de sangre o trasplantes antes de 1992</label>
+          <div class="points">
+            <span class="points-category points-hiv">+1</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">+4</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dominio Clínico -->
+      <div class="domain domain-clinical">
+        <h2>3. Dominio Clínico</h2>
+        <div class="risk-factor">
+          <input type="checkbox" id="pneumonia" name="pneumonia">
+          <label for="pneumonia">Neumonía adquirida en la comunidad (en pacientes de 16–65 años)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+2</span>
+            <span class="points-category points-hbv">0</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="tuberculosis" name="tuberculosis">
+          <label for="tuberculosis" class="tooltip">Tuberculosis activa o reciente
+            <span class="tooltiptext">Considerada condición indicadora de VIH</span>
+          </label>
+          <div class="points">
+            <span class="points-category points-hiv">+5</span>
+            <span class="points-category points-hbv">0</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="herpesZoster" name="herpesZoster">
+          <label for="herpesZoster">Herpes zóster en menores de 65 años</label>
+          <div class="points">
+            <span class="points-category points-hiv">+3</span>
+            <span class="points-category points-hbv">0</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="mononucleosis" name="mononucleosis">
+          <label for="mononucleosis">Síndrome mononucleósido o cuadro compatible</label>
+          <div class="points">
+            <span class="points-category points-hiv">+3</span>
+            <span class="points-category points-hbv">0</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="unexplainedFever" name="unexplainedFever">
+          <label for="unexplainedFever">Fiebre sin foco de origen aparente</label>
+          <div class="points">
+            <span class="points-category points-hiv">+2</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">+1</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="thrombocytopenia" name="thrombocytopenia">
+          <label for="thrombocytopenia">Plaquetopenia inexplicada (sin otra causa clara)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+2</span>
+            <span class="points-category points-hbv">+1</span>
+            <span class="points-category points-hcv">+1</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="weightLoss" name="weightLoss">
+          <label for="weightLoss">Pérdida de peso significativa inexplicada</label>
+          <div class="points">
+            <span class="points-category points-hiv">+3</span>
+            <span class="points-category points-hbv">0</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dominio de Laboratorio -->
+      <div class="domain domain-laboratory">
+        <h2>4. Dominio de Laboratorio</h2>
+        <div class="risk-factor">
+          <input type="checkbox" id="elevatedLiverEnzymes" name="elevatedLiverEnzymes">
+          <label for="elevatedLiverEnzymes">Elevación inexplicada de transaminasas (ALT/AST)</label>
+          <div class="points">
+            <span class="points-category points-hiv">0</span>
+            <span class="points-category points-hbv">+3</span>
+            <span class="points-category points-hcv">+3</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="acuteHepatitis" name="acuteHepatitis">
+          <label for="acuteHepatitis">Hepatitis aguda con transaminasas >500</label>
+          <div class="points">
+            <span class="points-category points-hiv">0</span>
+            <span class="points-category points-hbv">+5</span>
+            <span class="points-category points-hcv">+5</span>
+          </div>
+        </div>
+        <div class="risk-factor">
+          <input type="checkbox" id="hematologicalAbnormalities" name="hematologicalAbnormalities">
+          <label for="hematologicalAbnormalities">Alteraciones hematológicas inexplicables (leucopenia, linfopenia)</label>
+          <div class="points">
+            <span class="points-category points-hiv">+1</span>
+            <span class="points-category points-hbv">0</span>
+            <span class="points-category points-hcv">0</span>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" id="calculateBtn">Calcular Riesgo</button>
+      
+      <div class="results" id="resultsSection" style="display: none;">
+        <h2>Resultados del Índice Triviral</h2>
+        <div class="virus-results">
+          <div class="virus-result result-hiv">
+            <h3>VIH</h3>
+            <p>Puntuación: <strong id="scoreHIV">0</strong></p>
+            <div id="riskLevelHIV" class="risk-level risk-low">Riesgo Bajo</div>
+          </div>
+          <div class="virus-result result-hbv">
+            <h3>Hepatitis B</h3>
+            <p>Puntuación: <strong id="scoreHBV">0</strong></p>
+            <div id="riskLevelHBV" class="risk-level risk-low">Riesgo Bajo</div>
+          </div>
+          <div class="virus-result result-hcv">
+            <h3>Hepatitis C</h3>
+            <p>Puntuación: <strong id="scoreHCV">0</strong></p>
+            <div id="riskLevelHCV" class="risk-level risk-low">Riesgo Bajo</div>
+          </div>
+        </div>
+        <div class="recommendations">
+          <h3>Recomendaciones</h3>
+          <div id="recommendationText"></div>
+        </div>
+        <div id="detailedResults"></div>
+      </div>
+      
+      <div class="context-specific" id="contextActions" style="display: none;">
+        <h2>Acciones Recomendadas Según Contexto</h2>
+        <div id="hospitalContext" style="margin-bottom: 15px;">
+          <h3>Hospital con laboratorio</h3>
+          <div id="hospitalActions"></div>
+        </div>
+        <div id="primaryContext">
+          <h3>SUAP/Centro sin laboratorio inmediato</h3>
+          <div id="primaryActions"></div>
+        </div>
+      </div>
+      
+      <div class="referral-section" id="referralSection" style="display: none;">
+        <h2>Derivación si Resultado Positivo</h2>
+        <div class="referral-item">
+          <input type="checkbox" id="hivPositive" name="hivPositive">
+          <label for="hivPositive">VIH: Notificar al paciente + Derivación a </label>
+          <input type="text" placeholder="Servicio/Unidad" style="width: 200px;">
+          <span> (Tfno: </span>
+          <input type="text" placeholder="Contacto" style="width: 120px;">
+          <span>)</span>
+        </div>
+        <div class="referral-item">
+          <input type="checkbox" id="hbvPositive" name="hbvPositive">
+          <label for="hbvPositive">VHB: Notificar al paciente + Derivación a </label>
+          <input type="text" placeholder="Servicio/Unidad" style="width: 200px;">
+          <span> (Tfno: </span>
+          <input type="text" placeholder="Contacto" style="width: 120px;">
+          <span>)</span>
+        </div>
+        <div class="referral-item">
+          <input type="checkbox" id="hcvPositive" name="hcvPositive">
+          <label for="hcvPositive">VHC: Notificar al paciente + Derivación a </label>
+          <input type="text" placeholder="Servicio/Unidad" style="width: 200px;">
+          <span> (Tfno: </span>
+          <input type="text" placeholder="Contacto" style="width: 120px;">
+          <span>)</span>
+        </div>
+      </div>
+    </form>
+    
+    <div class="footer">
+      <p>Esta escala es una herramienta de ayuda a la decisión clínica y no sustituye el juicio médico profesional.</p>
+      <p>Índice Triviral v3.0 - Validado en entornos hospitalarios y extrahospitalarios</p>
+    </div>
+  </div>
+  
+  <script>
+    // Ejecutar cuando el DOM esté completamente cargado
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('calculateBtn').addEventListener('click', performCalculation);
+    });
+    
+    function performCalculation() {
+      console.log("Iniciando cálculo de riesgo");
+      // Mostrar resultados y secciones relacionadas
+      document.getElementById('resultsSection').style.display = 'block';
+      document.getElementById('contextActions').style.display = 'block';
+      document.getElementById('referralSection').style.display = 'block';
+      
+      // Inicializar puntuaciones por virus
+      let scores = {
+        hiv: 0,
+        hbv: 0,
+        hcv: 0
+      };
+      
+      // Filtrado previo
+      if (document.getElementById('prevHIV').checked) {
+        scores.hiv -= 4;
+      }
+      if (document.getElementById('hbvVaccine').checked) {
+        scores.hbv = "excluded";
+      }
+      if (document.getElementById('resolvedHCV').checked) {
+        scores.hcv = "excluded";
+      }
+      if (document.getElementById('knownHIV').checked) {
+        scores.hiv = "excluded";
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 1; }
+      }
+      
+      // Dominio Epidemiológico
+      if (document.getElementById('highPrevalenceHIV').checked) {
+        scores.hiv += 2;
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+      }
+      if (document.getElementById('highPrevalenceHBV').checked) {
+        scores.hiv += 1;
+        if (typeof scores.hbv === 'number') { scores.hbv += 3; }
+      }
+      if (document.getElementById('socioeconomicRisk').checked) {
+        scores.hiv += 1;
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 1; }
+      }
+      if (document.getElementById('birthCohort').checked) {
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 3; }
+      }
+      if (document.getElementById('prison').checked) {
+        scores.hiv += 1;
+        if (typeof scores.hbv === 'number') { scores.hbv += 2; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 2; }
+      }
+      
+      // Dominio Conductual
+      if (document.getElementById('injectionDrugs').checked) {
+        scores.hiv += 3;
+        if (typeof scores.hbv === 'number') { scores.hbv += 2; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 5; }
+      }
+      if (document.getElementById('msmMultiple').checked) {
+        scores.hiv += 4;
+        if (typeof scores.hbv === 'number') { scores.hbv += 3; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 1; }
+      }
+      if (document.getElementById('highRiskSex').checked) {
+        scores.hiv += 2;
+        if (typeof scores.hbv === 'number') { scores.hbv += 2; }
+      }
+      if (document.getElementById('contactHBV').checked) {
+        if (typeof scores.hbv === 'number') { scores.hbv += 4; }
+      }
+      if (document.getElementById('previousSTI').checked) {
+        scores.hiv += 2;
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+      }
+      if (document.getElementById('chemsex').checked) {
+        scores.hiv += 3;
+        if (typeof scores.hbv === 'number') { scores.hbv += 2; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 2; }
+      }
+      if (document.getElementById('tattoosPiercings').checked) {
+        scores.hiv += 1;
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 3; }
+      }
+      if (document.getElementById('transfusions').checked) {
+        scores.hiv += 1;
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 4; }
+      }
+      
+      // Dominio Clínico
+      if (document.getElementById('pneumonia').checked) {
+        scores.hiv += 2;
+      }
+      if (document.getElementById('tuberculosis').checked) {
+        scores.hiv += 5;
+      }
+      if (document.getElementById('herpesZoster').checked) {
+        scores.hiv += 3;
+      }
+      if (document.getElementById('mononucleosis').checked) {
+        scores.hiv += 3;
+      }
+      if (document.getElementById('unexplainedFever').checked) {
+        scores.hiv += 2;
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 1; }
+      }
+      if (document.getElementById('thrombocytopenia').checked) {
+        scores.hiv += 2;
+        if (typeof scores.hbv === 'number') { scores.hbv += 1; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 1; }
+      }
+      if (document.getElementById('weightLoss').checked) {
+        scores.hiv += 3;
+      }
+      
+      // Dominio de Laboratorio
+      if (document.getElementById('elevatedLiverEnzymes').checked) {
+        if (typeof scores.hbv === 'number') { scores.hbv += 3; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 3; }
+      }
+      if (document.getElementById('acuteHepatitis').checked) {
+        if (typeof scores.hbv === 'number') { scores.hbv += 5; }
+        if (typeof scores.hcv === 'number') { scores.hcv += 5; }
+      }
+      if (document.getElementById('hematologicalAbnormalities').checked) {
+        scores.hiv += 1;
+      }
+      
+      console.log("Puntuaciones calculadas:", scores);
+      
+      // Actualizar y mostrar resultados
+      updateResults(scores);
+      updateContextActions(getRiskLevels(scores));
+      document.getElementById('resultsSection').style.display = 'block';
+    }
+    
+    function getRiskLevels(scores) {
+      return {
+        hiv: getRiskLevel(scores.hiv, 3, 5),
+        hbv: getRiskLevel(scores.hbv, 3, 5),
+        hcv: getRiskLevel(scores.hcv, 3, 5)
+      };
+    }
+    
+    function getRiskLevel(score, moderateThreshold, highThreshold) {
+      if (score === "excluded") return 'excluido';
+      if (score >= highThreshold) return 'alto';
+      if (score >= moderateThreshold) return 'moderado';
+      return 'bajo';
+    }
+    
+    function updateResults(scores) {
+      document.getElementById('scoreHIV').innerHTML = scores.hiv === "excluded" ? 
+        '<span class="tooltip">Excluido<span class="tooltiptext">Paciente con VIH conocido y en seguimiento</span></span>' : 
+        '<span class="tooltip">' + scores.hiv + '<span class="tooltiptext">VIH: ≥5 alto, 3-4 moderado, <3 bajo</span></span>';
+      
+      document.getElementById('scoreHBV').innerHTML = scores.hbv === "excluded" ? 
+        '<span class="tooltip">Excluido<span class="tooltiptext">Paciente vacunado contra VHB</span></span>' : 
+        '<span class="tooltip">' + scores.hbv + '<span class="tooltiptext">VHB: ≥5 alto, 3-4 moderado, <3 bajo</span></span>';
+      
+      document.getElementById('scoreHCV').innerHTML = scores.hcv === "excluded" ? 
+        '<span class="tooltip">Excluido<span class="tooltiptext">Paciente con VHC resuelta</span></span>' : 
+        '<span class="tooltip">' + scores.hcv + '<span class="tooltiptext">VHC: ≥5 alto, 3-4 moderado, <3 bajo</span></span>';
+      
+      updateRiskLevel('HIV', getRiskLevel(scores.hiv, 3, 5));
+      updateRiskLevel('HBV', getRiskLevel(scores.hbv, 3, 5));
+      updateRiskLevel('HCV', getRiskLevel(scores.hcv, 3, 5));
+      
+      let recommendation = generateRecommendations(scores, getRiskLevels(scores));
+      document.getElementById('recommendationText').innerHTML = recommendation;
+      
+      let detailed = getDetailedResults();
+      document.getElementById('detailedResults').innerHTML = detailed;
+    }
+    
+    function updateRiskLevel(virus, level) {
+      const element = document.getElementById(`riskLevel${virus}`);
+      element.textContent = level === 'excluido' ? 'No requiere evaluación' : `Riesgo ${level.charAt(0).toUpperCase() + level.slice(1)}`;
+      element.classList.remove('risk-low', 'risk-moderate', 'risk-high', 'risk-excluded');
+      if (level === 'bajo') {
+        element.classList.add('risk-low');
+      } else if (level === 'moderado') {
+        element.classList.add('risk-moderate');
+      } else if (level === 'alto') {
+        element.classList.add('risk-high');
+      } else if (level === 'excluido') {
+        element.classList.add('risk-excluded');
+      }
+    }
+    
+    function generateRecommendations(scores, riskLevels) {
+      let html = '<div class="recommendation-item">';
+      if (riskLevels.hiv !== 'excluido' && riskLevels.hbv !== 'excluido' && riskLevels.hcv !== 'excluido') {
+        if ((riskLevels.hiv === 'moderado' || riskLevels.hiv === 'alto') &&
+            (riskLevels.hbv === 'moderado' || riskLevels.hbv === 'alto') &&
+            (riskLevels.hcv === 'moderado' || riskLevels.hcv === 'alto')) {
+          html += '<strong>Panel serológico completo recomendado:</strong> Solicitar serología de VIH, VHB y VHC.';
+        } else {
+          html += '<strong>Pruebas serológicas selectivas recomendadas:</strong><ul>';
+          if (riskLevels.hiv === 'alto') {
+            html += '<li><strong>VIH:</strong> Prueba urgente (ELISA/test rápido)</li>';
+          } else if (riskLevels.hiv === 'moderado') {
+            html += '<li><strong>VIH:</strong> Prueba recomendada</li>';
+          }
+          if (riskLevels.hbv === 'alto') {
+            html += '<li><strong>VHB:</strong> Serología urgente (HBsAg y anti-HBc)</li>';
+          } else if (riskLevels.hbv === 'moderado') {
+            html += '<li><strong>VHB:</strong> Serología recomendada</li>';
+          }
+          if (riskLevels.hcv === 'alto') {
+            html += '<li><strong>VHC:</strong> Serología urgente (anti-VHC)</li>';
+          } else if (riskLevels.hcv === 'moderado') {
+            html += '<li><strong>VHC:</strong> Serología recomendada</li>';
+          }
+          html += '</ul>';
+        }
+      } else {
+        html += '<strong>No se requieren pruebas serológicas adicionales</strong> según los datos proporcionados.';
+      }
+      
+      if (scores.hiv === "excluded") {
+        html += '<div class="recommendation-item"><strong>Nota:</strong> Paciente con VIH conocido, considerar cribado de coinfecciones si no se realizó recientemente.</div>';
+      }
+      if (scores.hbv === "excluded") {
+        html += '<div class="recommendation-item"><strong>Nota:</strong> Paciente vacunado contra VHB. No es necesaria serología VHB.</div>';
+      }
+      if (scores.hcv === "excluded") {
+        html += '<div class="recommendation-item"><strong>Nota:</strong> Paciente con VHC resuelta documentada. Evaluar si hay nuevos factores de riesgo.</div>';
+      }
+      
+      html += '</div>';
+      return html;
+    }
+    
+    function updateContextActions(riskLevels) {
+      let hospitalHTML = '<ul>';
+      if (riskLevels.hiv === 'alto') {
+        hospitalHTML += '<li>VIH: Solicitar ELISA 4ª generación urgente.</li>';
+      } else if (riskLevels.hiv === 'moderado') {
+        hospitalHTML += '<li>VIH: Considerar ELISA o test rápido según disponibilidad.</li>';
+      }
+      if (riskLevels.hbv === 'alto') {
+        hospitalHTML += '<li>VHB: Solicitar HBsAg, anti-HBc y anti-HBs urgente.</li>';
+      } else if (riskLevels.hbv === 'moderado') {
+        hospitalHTML += '<li>VHB: Solicitar HBsAg y anti-HBc.</li>';
+      }
+      if (riskLevels.hcv === 'alto') {
+        hospitalHTML += '<li>VHC: Solicitar anti-VHC urgente y considerar PCR si es positivo.</li>';
+      } else if (riskLevels.hcv === 'moderado') {
+        hospitalHTML += '<li>VHC: Solicitar anti-VHC.</li>';
+      }
+      hospitalHTML += '</ul>';
+      document.getElementById('hospitalActions').innerHTML = hospitalHTML;
+      
+      let primaryHTML = '<ul>';
+      if (riskLevels.hiv === 'alto') {
+        primaryHTML += '<li>VIH: Realizar test rápido si está disponible o derivar al hospital para prueba urgente.</li>';
+      } else if (riskLevels.hiv === 'moderado') {
+        primaryHTML += '<li>VIH: Programar cita para serología en 24-72 horas.</li>';
+      }
+      if (riskLevels.hbv === 'alto') {
+        primaryHTML += '<li>VHB: Derivar al hospital para serología urgente.</li>';
+      } else if (riskLevels.hbv === 'moderado') {
+        primaryHTML += '<li>VHB: Programar cita para serología en 24-72 horas.</li>';
+      }
+      if (riskLevels.hcv === 'alto') {
+        primaryHTML += '<li>VHC: Realizar test rápido si está disponible o derivar al hospital para prueba urgente.</li>';
+      } else if (riskLevels.hcv === 'moderado') {
+        primaryHTML += '<li>VHC: Programar cita para serología en 24-72 horas.</li>';
+      }
+      primaryHTML += '</ul>';
+      document.getElementById('primaryActions').innerHTML = primaryHTML;
+    }
+    
+    function getDetailedResults() {
+      const checkedBoxes = document.querySelectorAll('input[type=checkbox]:checked');
+      if (checkedBoxes.length === 0) {
+        return '<p>No se han seleccionado factores de riesgo.</p>';
+      }
+      
+      let html = '<h3>Factores de riesgo identificados:</h3><ul>';
+      const domains = {
+        'pre-screening': { title: 'Filtrado Previo', items: [] },
+        'epidemiologic': { title: 'Dominio Epidemiológico', items: [] },
+        'behavioral': { title: 'Dominio Conductual', items: [] },
+        'clinical': { title: 'Dominio Clínico', items: [] },
+        'laboratory': { title: 'Dominio de Laboratorio', items: [] }
+      };
+      
+      checkedBoxes.forEach(function(checkbox) {
+        let domain = 'other';
+        const parentDomain = checkbox.closest('.domain') || checkbox.closest('.pre-screening');
+        if (parentDomain) {
+          if (parentDomain.classList.contains('pre-screening')) {
+            domain = 'pre-screening';
+          } else if (parentDomain.classList.contains('domain-epidemiologic')) {
+            domain = 'epidemiologic';
+          } else if (parentDomain.classList.contains('domain-behavioral')) {
+            domain = 'behavioral';
+          } else if (parentDomain.classList.contains('domain-clinical')) {
+            domain = 'clinical';
+          } else if (parentDomain.classList.contains('domain-laboratory')) {
+            domain = 'laboratory';
+          }
+        }
+        if (domains[domain]) {
+          domains[domain].items.push(checkbox.nextElementSibling.textContent.trim());
+        }
+      });
+      
+      for (const key in domains) {
+        if (domains[key].items.length > 0) {
+          html += `<li><strong>${domains[key].title}:</strong><ul>`;
+          domains[key].items.forEach(item => {
+            html += `<li>${item}</li>`;
+          });
+          html += '</ul></li>';
+        }
+      }
+      html += '</ul>';
+      return html;
+    }
+  </script>
+</body>
+</html>
